@@ -10,15 +10,20 @@ const users = [{
     _id: userOneId,
     email: 'phi@g.co',
     password: 'abc123',
+    _creator: userOneId,
     tokens: [{
         access: 'auth',
         token: jwt.sign({_id: userOneId, access: 'auth'}, 'abc123').toString()
-    }, {
+    }]
+}, {
         _id: userTwoId,
         email: 'phiabc@g.co',
         password: 'abc123',
-    }]
-}]
+        tokens: [{
+            access: 'auth',
+            token: jwt.sign({_id: userOneId, access: 'auth'}, 'abc123').toString()
+        }]
+  }]
 
 const todos = [{
     _id: new ObjectID(),
@@ -27,13 +32,14 @@ const todos = [{
     _id: new ObjectID(),
     text: 'second test todo',
     completed: true,
-    completedAt: 333
+    completedAt: 333,
+    _creator: userTwoId
 }];
 
 
-const populateTodos = (done) => {
+const populateTodos = () => {
     Todo.remove({}).then(() => {
-        done();
+        
         return Todo.insertMany(todos);
     });
 };
@@ -42,7 +48,7 @@ const populateUsers = () => {
      User.remove({}).then(() => {
         var userOne = new User(users[0]).save();
         var userTwo = new User(users[1]).save();
-        
+     
         return Promise.all([userOne, userTwo])
     });
 };
